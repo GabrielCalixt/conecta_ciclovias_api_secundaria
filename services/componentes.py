@@ -48,4 +48,4 @@ def medir_ilha(grafo, ilha):
         soma_total += soma_do_no
 
     # como toda aresta é somada duas vezes, divida por 2
-    return soma_total / 2
+    return round(soma_total / 2, 2)
