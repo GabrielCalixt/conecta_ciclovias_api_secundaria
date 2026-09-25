@@ -26,18 +26,6 @@ VIAS_EXEMPLO = [
 ]
 
 
-def verificar_invariantes(grafo):
-    """Regras que valem para QUALQUER grafo gerado por montar_grafo."""
-    for no, vizinhos in grafo.items():
-        assert no not in vizinhos, f"nó {no} é vizinho de si mesmo"
-        for vizinho, distancia in vizinhos.items():
-            assert distancia > 0, f"aresta {no}-{vizinho} com distância {distancia}"
-            assert vizinho in grafo, f"vizinho {vizinho} não existe como nó do grafo"
-            assert grafo[vizinho].get(no) == distancia, (
-                f"aresta {no}-{vizinho} não é simétrica"
-            )
-
-
 # testa a montagem do grafo com todas as vias (ciclovias e ruas)
 def test_montar_grafo_completo():
     grafo = montar_grafo(VIAS_EXEMPLO)
@@ -73,3 +61,15 @@ def test_montar_grafo_nao_altera_entrada():
 # caso de borda: sem vias, grafo vazio (e sem erro)
 def test_montar_grafo_sem_vias():
     assert montar_grafo([]) == {}
+
+
+def verificar_invariantes(grafo):
+    """Regras que valem para QUALQUER grafo gerado por montar_grafo."""
+    for no, vizinhos in grafo.items():
+        assert no not in vizinhos, f"nó {no} é vizinho de si mesmo"
+        for vizinho, distancia in vizinhos.items():
+            assert distancia > 0, f"aresta {no}-{vizinho} com distância {distancia}"
+            assert vizinho in grafo, f"vizinho {vizinho} não existe como nó do grafo"
+            assert grafo[vizinho].get(no) == distancia, (
+                f"aresta {no}-{vizinho} não é simétrica"
+            )
