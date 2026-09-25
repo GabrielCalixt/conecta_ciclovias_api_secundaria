@@ -6,3 +6,7 @@ app = FastAPI()
 @app.get("/saude")
 def saude():
     return {"status": "ok"}
+
+
+# @app.post("/componentes")
+# def components():
