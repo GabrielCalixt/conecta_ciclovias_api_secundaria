@@ -50,3 +50,48 @@ def test_input_invalido():
 
     resultado = client.post("/componentes", json={"vias": VIA_INVALIDA})
     assert resultado.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
+def test_caminho_minimo_happy_path():
+    corpo = {"vias": VIAS_EXEMPLO, "origem": 1, "destino": 11}
+
+    response = client.post("/caminho-minimo", json=corpo)
+
+    assert response.status_code == status.HTTP_200_OK
+    resultado = response.json()
+    # sai da ilha A, passa pela rua (5 -> 4 -> 10) e chega na ilha B
+    assert resultado["nos"] == [1, 2, 3, 5, 4, 10, 11]
+    assert resultado["metros"] > 0
+
+
+def test_caminho_minimo_sem_caminho_404():
+    vias_soltas = [
+        {
+            "id": 1,
+            "tipo": "rua",
+            "nos": [1, 2],
+            "coordenadas": [[-22.95, -43.18], [-22.951, -43.181]],
+        },
+        {
+            "id": 2,
+            "tipo": "rua",
+            "nos": [3, 4],
+            "coordenadas": [[-22.96, -43.19], [-22.961, -43.191]],
+        },
+    ]
+
+    response = client.post(
+        "/caminho-minimo", json={"vias": vias_soltas, "origem": 1, "destino": 4}
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_analises_happy_path():
+    response = client.post("/analises", json={"vias": VIAS_EXEMPLO})
+
+    assert response.status_code == status.HTTP_200_OK
+    resultado = response.json()
+    assert resultado["total_ilhas"] == 2
+    assert resultado["malha_principal"]["nos"] == [1, 2, 3, 5]
+    assert resultado["propostas"][0]["caminho"] == [5, 4, 10]
